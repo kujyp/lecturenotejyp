@@ -29,7 +29,7 @@ public class SpeechClientJYP {
 
     //JYP
 
-    SpeechClientJYP(String client_id, String speech_config,  Activity mainactivity, Handler m_handler) {
+    SpeechClientJYP(String client_id, String speech_config, Activity mainactivity, Handler m_handler) {
         isRunning = false;
         mResult = "";
         m_Handler = m_handler;
@@ -49,7 +49,7 @@ public class SpeechClientJYP {
     public boolean startASR() {
         // return TRUE -> is just started / FALSE -> when it's running already
         //JYP
-        if(!isRunning) {
+        if (!isRunning) {
             mResult = "";
             isRunning = true;
 
@@ -58,11 +58,14 @@ public class SpeechClientJYP {
             //Log.e("JYP/S", "naverRecognizer.recognize() END");
 
             return true;
-        }
-        else {
+        } else {
             return false;
         }
         //JYP
+    }
+
+    public void stopASR() {
+        // todo 구현
     }
 
 

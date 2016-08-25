@@ -8,36 +8,33 @@ import java.util.ArrayList;
  * Created by JYP on 16. 7. 22..
  */
 public class Notetaking {
-    private ArrayList<String> arraySentence;
-    //JYP0722 private ArrayList<Time> arrayTime;
-    private int nSentence;
+    private ArrayList<Note> notes;
 
-    Notetaking() {
-        this.arraySentence = new ArrayList<String>();
-        this.nSentence = 0;
+    Notetaking(){
+        this.notes = new ArrayList<Note>();
     }
 
-    public void add(String sentence)
+    Notetaking(Note note) {
+        this.notes = new ArrayList<Note>();
+        this.notes.add(note);
+    }
+
+    public void add(Note note)
     {
-        if(!sentence.isEmpty()) {
-            this.arraySentence.add(sentence);
-            this.nSentence++;
-
-            //Log.i("Note/Add " + this.nSentence, sentence);
-            //Log.i("Note/Add " + this.nSentence, arraySentence.get(nSentence - 1));
-        }
-        else {
-            //Log.i("Note/Add ", "NULL");
-        }
+        this.notes.add(note);
     }
 
-    public String summary() {
-        String summary = "";
-        //Log.i("Note/Sum "+this.nSentence,"1");
-        for(int k1 = 0; k1 < this.nSentence; k1++) {
-            summary = summary + arraySentence.get(k1) + " / ";
-            //Log.i("Note/Sum", summary);
-        }
-        return summary;
+    public ArrayList<Note> get_list() {
+        return this.notes;
+    }
+
+    public String get_context() { return ""; } // todo 구현
+
+    public Note get(int index) {
+        return this.notes.get(index);
+    }
+
+    public int length() {
+        return this.notes.size();
     }
 }

@@ -1,6 +1,7 @@
 package ku.oaz.jyp.lecturenotejyp.utils;
 
 import android.app.Activity;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -38,8 +39,9 @@ public class NaverRecognizer implements SpeechRecognitionListener {
 		mRecognizer.setSpeechRecognitionListener(this);
 
 		// If you want to recognize audio file, please add codes as follows.
-		// mRecognizer.setAudioFileInput(true);
-		// mRecognizer.setAudioFilePath(Environment.getExternalStorageDirectory().getAbsolutePath()
+		//mRecognizer.mAudioCapture.set(true);
+		// pcm convert
+		//mRecognizer.setAudioFilePath(Environment.getExternalStorageDirectory().getAbsolutePath()
 		// + "/NaverSpeechTest/TestInput.pcm");
 	}
 
