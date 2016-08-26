@@ -59,6 +59,11 @@ public class NaverRecognizer implements SpeechRecognitionListener {
 		}
 	}
 
+	public void stop() {
+		mRecognizer.stop();
+		Log.e("JYP/u/N", "mRecognizer.stop()");
+	}
+
 	@Override
 	public void onInactive() {
 		Log.d(TAG, "Event occurred : Inactive");

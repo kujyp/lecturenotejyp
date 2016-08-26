@@ -21,6 +21,7 @@ public class SpeechClientJYP {
     private NaverRecognizer naverRecognizer;
 
     private static AudioWriterPCM writer;
+    private static String writer_filename = "Test";
 
     public static boolean isRunning;
     private static String mResult;
@@ -65,6 +66,7 @@ public class SpeechClientJYP {
     }
 
     public void stopASR() {
+        naverRecognizer.stop();
         // todo 구현
     }
 
@@ -82,7 +84,7 @@ public class SpeechClientJYP {
 
                     writer = new AudioWriterPCM(
                             Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudioBuffer");
-                    writer.open("Test");
+                    writer.open(writer_filename);
                     break;
 
                 case R.id.audioRecording:

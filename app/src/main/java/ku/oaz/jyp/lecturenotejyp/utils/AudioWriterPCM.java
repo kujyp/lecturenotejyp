@@ -26,6 +26,7 @@ public class AudioWriterPCM {
 		filename = directory + "/" + sessionId + ".pcm";
 		try {
 			speechFile = new FileOutputStream(new File(filename));
+			System.out.println(filename);
 		} catch (FileNotFoundException e) {
 			System.err.println("Can't open file : " + filename);
 			speechFile = null;

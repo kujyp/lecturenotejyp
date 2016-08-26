@@ -9,9 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 public class PlayerActivity extends Activity {
     private static View m_btnPlay;
     private static TextView m_resultText;
+    private static Player player;
 
     private static Notetaking notetaking;
 
@@ -25,18 +28,45 @@ public class PlayerActivity extends Activity {
 
         m_btnPlay = findViewById(R.id.m_play);
         m_btnPlay.setOnClickListener(mClickListener);
+
+        try {
+            String test = "/storage/emulated/0/LNOTEAudioBuffer/Test.pcm";
+            convert_and_play(test);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     Button.OnClickListener mClickListener = new Button.OnClickListener() {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.m_play:
+                    if(player.playable())
+                    {
+                        player.play();
+                    }
                     break;
+//                case R.id.m_open:
+//                    open_file(path);
+//                    break;
                 case R.id.m_resultText:
                     break;
             }
         }
     };
+
+    private void convert_and_play(String path) throws IOException {
+        try {
+            String wav = player.convert_to_wav(path);
+            open_file_withpath(wav);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void open_file_withpath(String path) {
+        player = new Player(path);
+    }
 //    private void initData() {
 //        String path = "/";
 //        getChildren().clear();

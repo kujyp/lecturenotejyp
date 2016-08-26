@@ -22,8 +22,7 @@ public class Player {
     }
 
     public void setPath(String path) {
-        this.path = this.PATH_dir + path;
-    }
+        this.path = path; } // todo fix it this.path = this.PATH_dir + path; }
 
     public String getPath() {
         return this.path;
@@ -31,7 +30,7 @@ public class Player {
 
     public void play() {
         try {
-            this.mediaplayer.setDataSource(path);
+            this.mediaplayer.setDataSource(this.path);
             this.mediaplayer.prepare();
             this.mediaplayer.start();
         } catch (IllegalArgumentException e) {
@@ -41,6 +40,30 @@ public class Player {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean is_pcm(String path) {
+        if(true) // todo 구현
+            return true;
+        else
+            return false;
+    }
+
+    public String convert_to_wav(String pcm_path) throws IOException {
+        PCMtoWav pcmtowav = new PCMtoWav();
+        String wav_path = extension_pcm_to_wav(pcm_path);
+
+        try {
+            pcmtowav.convert_to_wav(pcm_path, wav_path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return wav_path;
+    }
+
+    public String extension_pcm_to_wav(String pcm_path){
+        return pcm_path.replace(".pcm", ".wav");
     }
 
     public void stop() {
@@ -55,5 +78,12 @@ public class Player {
         int msec = (int)(sec*1000);
 
         this.mediaplayer.seekTo(msec);
+    }
+
+    public boolean playable() {
+        if(this.mediaplayer.isPlaying() || this.path == null)
+            return false;
+        else
+            return true;
     }
 }
