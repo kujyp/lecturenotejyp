@@ -28,12 +28,15 @@ public class SpeechClientJYP {
 
     private static Handler m_Handler;
 
-    //JYP
+    private static Notetaking notetaking;
+    private static long tic_time;
 
     SpeechClientJYP(String client_id, String speech_config, Activity mainactivity, Handler m_handler) {
         isRunning = false;
         mResult = "";
         m_Handler = m_handler;
+        notetaking = new Notetaking();
+
 
         if (speech_config == "EN")
             SPEECH_CONFIG = SpeechConfig.OPENAPI_EN;
@@ -56,6 +59,7 @@ public class SpeechClientJYP {
 
             //Log.e("JYP/S", "naverRecognizer.recognize() START");
             naverRecognizer.recognize();
+            tic();
             //Log.e("JYP/S", "naverRecognizer.recognize() END");
 
             return true;
@@ -70,6 +74,13 @@ public class SpeechClientJYP {
         // todo 구현
     }
 
+    public void tic() {
+        tic_time = System.currentTimeMillis();
+    }
+
+    public static long toc() {
+        return (System.currentTimeMillis() - tic_time);
+    }
 
 
     private static Handler scl_handler = new Handler() {
@@ -104,6 +115,7 @@ public class SpeechClientJYP {
                     // The first element is recognition result for speech.
                     String[] results = (String[]) scl_msg.obj;
                     mResult = results[0];
+                    notewrite(mResult, toc());
                     m_msg = Message.obtain(m_Handler, 3, mResult); // 3 = finalResult
                     m_Handler.sendMessage(m_msg);
                     break;
@@ -132,4 +144,14 @@ public class SpeechClientJYP {
             //Log.e("JYP/S", "scl_Handler END");
         }
     };
+
+    private static void notewrite(String mResult, long toc_time)
+    {
+        notetaking.add(new Note(mResult, 0, (double)toc_time));
+    }
+
+    public String get_context()
+    {
+        return notetaking.get_context();
+    }
 }

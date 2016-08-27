@@ -28,7 +28,7 @@ public class Notetaking {
         return this.notes;
     }
 
-    public String get_context() { return ""; } // todo 구현
+    public String get_context() { return this.notes.get(0).get_context(); } // todo 구현
 
     public Note get(int index) {
         return this.notes.get(index);

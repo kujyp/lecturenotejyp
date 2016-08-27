@@ -57,7 +57,7 @@ public class PlayerActivity extends Activity {
 
     private void convert_and_play(String path) throws IOException {
         try {
-            String wav = player.convert_to_wav(path);
+            String wav = (new Player()).convert_to_wav(path);
             open_file_withpath(wav);
         } catch (IOException e) {
             e.printStackTrace();

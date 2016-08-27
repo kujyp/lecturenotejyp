@@ -45,7 +45,10 @@ public class ASRActivity extends Activity {
     }
 
     static Handler m_handler = new Handler() {
-        public void handleMessage(Message m_msg) { m_resultText.setText( (String)m_msg.obj ); }// todo fix it ((Notetaking)m_msg.obj).get_context() ); }
+        public void handleMessage(Message m_msg) {
+            if (m_msg.what == 3)
+                m_resultText.setText( SpeechClientJYP.get_context() );
+        }// todo fix it ((Notetaking)m_msg.obj).get_context() ); }
     };
 
     Button.OnClickListener mClickListener = new Button.OnClickListener() {
@@ -66,7 +69,4 @@ public class ASRActivity extends Activity {
 
         }
     };
-    //OnClickListener #2
-
-
 }
