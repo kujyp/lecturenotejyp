@@ -1,6 +1,7 @@
 package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 
 import android.app.Activity;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Bundle;
@@ -9,18 +10,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import ku.oaz.jyp.lecturenotejyp.*;
 import ku.oaz.jyp.lecturenotejyp.Notetaking.*;
+import ku.oaz.jyp.lecturenotejyp.Notetaking.Notetakings.*;
 import ku.oaz.jyp.lecturenotejyp.ASRActivity.*;
 
 public class PlayerActivity extends Activity {
-    private static View m_btnPlay;
-    private static TextView m_resultText;
-    private static Player player;
+    private View m_btnPlay;
+    private TextView m_resultText;
+    private Player[] player;
+    private Player current_player;
 
-    private static Notetaking notetaking;
+    private Notetaking notetaking;
+
+    private String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio/";;
+    private String filename = "Test";
+    private String fileext = ".pcm";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,25 +43,21 @@ public class PlayerActivity extends Activity {
         m_btnPlay = findViewById(R.id.m_play);
         m_btnPlay.setOnClickListener(mClickListener);
 
-        try {
-            String test = "/storage/emulated/0/LNOTEAudioBuffer/Test.pcm";
-            convert_and_play(test);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        read(path + filename);
+        set_player(path, filename);// todo remove it
     }
 
     Button.OnClickListener mClickListener = new Button.OnClickListener() {
         public void onClick(View v) {
             switch(v.getId()) {
                 case R.id.m_play:
-                    if(player.playable())
-                    {
-                        player.play();
-                    }
+                    play();
                     break;
 //                case R.id.m_open:
-//                    open_file(path);
+//                    path = open_file();
+//                    read(path);
+//                    set_player(path());
 //                    break;
                 case R.id.m_resultText:
                     break;
@@ -59,17 +65,79 @@ public class PlayerActivity extends Activity {
         }
     };
 
-    private void convert_and_play(String path) throws IOException {
+    public void read(String pathNfilename) {
         try {
-            String wav = (new Player()).convert_to_wav(path);
-            open_file_withpath(wav);
+            FileInputStream fin = new FileInputStream(pathNfilename);
+            ObjectInputStream ois = new ObjectInputStream(fin);
+
+            try {
+                this.set_notetaking((Notetaking) ois.readObject());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            fin.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void open_file_withpath(String path) {
-        player = new Player(path);
+    public void play(int no) {
+        while (true) {
+            if (!this.isPlaying()) {
+                this.player[no].play();
+                this.current_player = this.player[no];
+                break;
+            }
+        }
+    }
+
+    public boolean isPlaying() {
+        if(this.get_current_player() != null) {
+            return this.get_current_player().isplaying();
+        }
+        else {
+            return false;
+        }
+    }
+    public Player get_current_player() {
+        return this.current_player;
+    }
+
+    public void play() {
+        for (int k1 = 0; k1 < this.get_Nnotes(); k1++) {
+            play(k1);
+        }
+    }
+
+    public void set_player(String path, String filename) {
+        this.player = new Player[this.get_Nnotes()];
+        for(int k1 = 1; k1 <= this.get_Nnotes(); k1++) {
+            try {
+                String wav_filename = Player.convert_to_wav(path, filename + Integer.toString(k1) + fileext);
+                this.player[k1-1] = open_file_withpath(path, wav_filename);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public int get_Nnotes() {
+        if (this.notetaking != null) {
+            return this.notetaking.length(); }
+        else {
+            return 0;}
+    }
+
+    public void set_notetaking(Notetaking notetaking) {
+        this.notetaking = notetaking;
+    }
+    public Notetaking get_notetaking() {
+        return this.notetaking;
+    }
+
+    private Player open_file_withpath(String path, String filename) {
+        return new Player(path, filename);
     }
 //    private void initData() {
 //        String path = "/";

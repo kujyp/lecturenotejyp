@@ -3,34 +3,52 @@ package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 import android.media.MediaPlayer;
 import android.os.Environment;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 /**
  * Created by JYP on 16. 8. 25..
  */
 public class Player {
-    String PATH_dir = Environment.getExternalStorageDirectory().getAbsolutePath();
-    String path;
-    MediaPlayer mediaplayer;
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath();
+    String filename = "Test";
+    private MediaPlayer mediaplayer;
 
-    Player() {
+    public Player() {
         this.mediaplayer = new MediaPlayer();
     }
-    Player(String path) {
+    public Player(String path, String filename) {
         this.mediaplayer = new MediaPlayer();
-        this.setPath(path);
+        this.set_path(path);
+        this.set_filename(filename);
     }
 
-    public void setPath(String path) {
-        this.path = path; } // todo fix it this.path = this.PATH_dir + path; }
+    public void set_path(String path) {
+        this.path = path; }
 
-    public String getPath() {
+    public String get_path() {
         return this.path;
+    }
+
+    public void set_filename(String filename) {
+        this.filename = filename; }
+
+    public String get_filename() {
+        return this.filename;
+    }
+
+    public MediaPlayer get_mediaplayer() {
+        return mediaplayer;
+    }
+
+    public boolean isplaying() {
+        return this.mediaplayer.isPlaying();
     }
 
     public void play() {
         try {
-            this.mediaplayer.setDataSource(this.path);
+            this.mediaplayer.setDataSource(this.path + this.filename);
             this.mediaplayer.prepare();
             this.mediaplayer.start();
         } catch (IllegalArgumentException e) {
@@ -49,20 +67,20 @@ public class Player {
             return false;
     }
 
-    public String convert_to_wav(String pcm_path) throws IOException {
+    public static String convert_to_wav(String path, String pcm_filename) throws IOException {
         PCMtoWav pcmtowav = new PCMtoWav();
-        String wav_path = extension_pcm_to_wav(pcm_path);
+        String wav_filename = extension_pcm_to_wav(pcm_filename);
 
         try {
-            pcmtowav.convert_to_wav(pcm_path, wav_path);
+            pcmtowav.convert_to_wav(path + pcm_filename, path + wav_filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return wav_path;
+        return wav_filename;
     }
 
-    public String extension_pcm_to_wav(String pcm_path){
+    public static String extension_pcm_to_wav(String pcm_path){
         return pcm_path.replace(".pcm", ".wav");
     }
 

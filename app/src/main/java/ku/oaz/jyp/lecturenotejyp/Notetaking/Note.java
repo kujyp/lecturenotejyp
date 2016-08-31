@@ -1,9 +1,11 @@
 package ku.oaz.jyp.lecturenotejyp.Notetaking;
 
+import java.io.Serializable;
+
 /**
  * Created by JYP on 16. 8. 24..
  */
-public class Note {
+public class Note implements Serializable {
     private String note_context;
     private double note_startingpoint;
     private double note_duration;
@@ -15,7 +17,7 @@ public class Note {
     }
 
     public String get_context(){
-        return this.note_context;
+        return Double.toString(note_startingpoint) + " : " + this.note_context;
     }
 
     public double get_startingpoint() {

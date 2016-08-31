@@ -8,8 +8,16 @@ import android.util.Log;
 
 import com.naver.speech.clientapi.SpeechConfig;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+
 import ku.oaz.jyp.lecturenotejyp.Notetaking.*;
 import ku.oaz.jyp.lecturenotejyp.*;
+import ku.oaz.jyp.lecturenotejyp.Notetaking.Notetakings.*;
+
 import ku.oaz.jyp.lecturenotejyp.utils.AudioWriterPCM;
 import ku.oaz.jyp.lecturenotejyp.utils.NaverRecognizer;
 
@@ -23,8 +31,9 @@ public class SpeechClientJYP {
     private NaverRecognizer naverRecognizer;
 
     private AudioWriterPCM writer;
-    private String writer_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio";
+    private String writer_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio/";
     private String writer_filename = "Test";
+    private int writer_fileno;
 
     public boolean isRunning;
     private String mResult;
@@ -32,6 +41,7 @@ public class SpeechClientJYP {
     private Handler m_Handler;
 
     private Notetaking notetaking;
+    private long initial_tic_time;
     private long tic_time;
     private boolean ASRflag;
 
@@ -55,14 +65,35 @@ public class SpeechClientJYP {
 
 
     public void startASR() {
-        ASRflag = true;
+        this.ASRflag = true;
+        this.writer_fileno = 0;
+        this.initial_tic_time = tic();
+        this.notetaking = new Notetaking();
         recognize();
     }
 
     public void stopASR() {
         ASRflag = false;
         naverRecognizer.stop();
-        // todo 구현
+
+        try {
+            save(notetaking, this.get_path(), this.get_filename());
+            Log.e("jyp/save", this.get_path() + this.get_filename());
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void save(Notetaking notetaking, String path, String filename) throws IOException, FileNotFoundException {
+        File directory = new File(path);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        FileOutputStream fout = new FileOutputStream(path+filename);
+        ObjectOutputStream oos = new ObjectOutputStream(fout);
+        oos.writeObject(this.notetaking);
+        oos.close();
     }
 
     private void restartASR() {
@@ -82,12 +113,12 @@ public class SpeechClientJYP {
         }
     }
 
-    public void tic() {
-        tic_time = System.currentTimeMillis();
+    public long tic() {
+        return this.tic_time = System.currentTimeMillis();
     }
 
     public long toc() {
-        return (System.currentTimeMillis() - tic_time);
+        return (System.currentTimeMillis() - this.tic_time);
     }
 
 
@@ -102,7 +133,8 @@ public class SpeechClientJYP {
                     m_Handler.sendMessage(m_msg);
 
                     writer = new AudioWriterPCM(writer_path);
-                    writer.open(writer_filename);
+                    writer_fileno++;
+                    writer.open(writer_filename + Integer.toString(writer_fileno));
                     break;
 
                 case R.id.audioRecording:
@@ -175,7 +207,7 @@ public class SpeechClientJYP {
 
     private void notewrite(String mResult, long toc_time)
     {
-        this.notetaking.add(new Note(mResult, (double)this.tic_time, (double)toc_time));
+        this.notetaking.add(new Note(mResult, (double)(this.tic_time - this.initial_tic_time), (double)toc_time));
     }
 
     public String[] get_context()

@@ -15,11 +15,15 @@ import android.widget.TextView;
 import ku.oaz.jyp.lecturenotejyp.*;
 import ku.oaz.jyp.lecturenotejyp.Notetaking.*;
 import ku.oaz.jyp.lecturenotejyp.SoundPlayer.*;
+import ku.oaz.jyp.lecturenotejyp.Notetaking.Notetakings.*;
 
 public class ASRActivity extends Activity {
     private final String CLIENT_ID = "vu7SHZ_wtYEU_j7nAfO5";
     private final String SPEECH_CONFIG_KR = "KR"; // "KOREAN"
     private final String SPEECH_CONFIG_EN = "EN"; // "ENGLISH"
+
+    private String abs_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio/";
+    private String abs_filename = "Test";
 
     private SpeechClientJYP SpeechClientJYP;
     private Recorder recorder;
@@ -66,7 +70,7 @@ public class ASRActivity extends Activity {
 //                    enname();
 //                    break;
                 case R.id.m_record:
-                    enname(Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio", "Test"); //todo remove
+                    enname(abs_path, abs_filename); //todo remove
                     record();
                     //Log.e("JYP/A", "startASR END");
                     break;
@@ -83,7 +87,7 @@ public class ASRActivity extends Activity {
     };
 
     public void outputResult() {
-        m_resultText.setText( TextUtils.join("/", SpeechClientJYP.get_context()) );
+        m_resultText.setText( TextUtils.join("\n", SpeechClientJYP.get_context()) );
     }
 
     public void record() {

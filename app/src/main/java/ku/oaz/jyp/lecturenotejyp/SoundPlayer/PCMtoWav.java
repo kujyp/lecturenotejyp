@@ -1,5 +1,7 @@
 package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 
+import android.media.AudioRecord;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -20,10 +22,10 @@ public class PCMtoWav {
         byte[] rawData = new byte[(int) rawFile.length()];
         DataInputStream input = null;
 
-        int sample_rate = 44100;
+        int sample_rate = 16000;
         int num_channels = 1;
         int bits_per_sample = 16;
-        int byte_rate = sample_rate * num_channels * bits_per_sample / 8;
+        int byte_rate = 16000 * 2;
 
         try {
             input = new DataInputStream(new FileInputStream(rawFile));
