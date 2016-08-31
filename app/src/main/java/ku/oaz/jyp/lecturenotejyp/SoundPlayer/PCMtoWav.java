@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;

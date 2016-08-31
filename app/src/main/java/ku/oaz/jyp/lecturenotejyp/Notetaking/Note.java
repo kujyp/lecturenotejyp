@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.Notetaking;
 
 /**
  * Created by JYP on 16. 8. 24..
@@ -8,7 +8,7 @@ public class Note {
     private double note_startingpoint;
     private double note_duration;
 
-    Note(String note_context, double note_startingpoint, double note_duration){
+    public Note(String note_context, double note_startingpoint, double note_duration){
         this.note_context = note_context;
         this.note_startingpoint = note_startingpoint;
         this.note_duration = note_duration;

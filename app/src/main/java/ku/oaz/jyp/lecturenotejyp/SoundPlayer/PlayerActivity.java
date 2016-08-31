@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 
 import android.app.Activity;
 import android.os.Handler;
@@ -10,6 +10,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
+
+import ku.oaz.jyp.lecturenotejyp.*;
+import ku.oaz.jyp.lecturenotejyp.Notetaking.*;
+import ku.oaz.jyp.lecturenotejyp.ASRActivity.*;
 
 public class PlayerActivity extends Activity {
     private static View m_btnPlay;

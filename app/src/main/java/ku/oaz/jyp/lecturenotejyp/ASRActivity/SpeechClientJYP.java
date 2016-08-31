@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.ASRActivity;
 
 import android.app.Activity;
 import android.os.Environment;
@@ -8,6 +8,8 @@ import android.util.Log;
 
 import com.naver.speech.clientapi.SpeechConfig;
 
+import ku.oaz.jyp.lecturenotejyp.Notetaking.*;
+import ku.oaz.jyp.lecturenotejyp.*;
 import ku.oaz.jyp.lecturenotejyp.utils.AudioWriterPCM;
 import ku.oaz.jyp.lecturenotejyp.utils.NaverRecognizer;
 
@@ -15,21 +17,23 @@ import ku.oaz.jyp.lecturenotejyp.utils.NaverRecognizer;
  * Created by JYP on 16. 7. 22..
  */
 public class SpeechClientJYP {
-    private static SpeechConfig SPEECH_CONFIG;
+    private SpeechConfig SPEECH_CONFIG;
 
 
     private NaverRecognizer naverRecognizer;
 
-    private static AudioWriterPCM writer;
-    private static String writer_filename = "Test";
+    private AudioWriterPCM writer;
+    private String writer_path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio";
+    private String writer_filename = "Test";
 
-    public static boolean isRunning;
-    private static String mResult;
+    public boolean isRunning;
+    private String mResult;
 
-    private static Handler m_Handler;
+    private Handler m_Handler;
 
-    private static Notetaking notetaking;
-    private static long tic_time;
+    private Notetaking notetaking;
+    private long tic_time;
+    private boolean ASRflag;
 
     SpeechClientJYP(String client_id, String speech_config, Activity mainactivity, Handler m_handler) {
         isRunning = false;
@@ -50,9 +54,24 @@ public class SpeechClientJYP {
     }
 
 
-    public boolean startASR() {
+    public void startASR() {
+        ASRflag = true;
+        recognize();
+    }
+
+    public void stopASR() {
+        ASRflag = false;
+        naverRecognizer.stop();
+        // todo 구현
+    }
+
+    private void restartASR() {
+        if(ASRflag)
+            recognize();
+    }
+
+    public void recognize() {
         // return TRUE -> is just started / FALSE -> when it's running already
-        //JYP
         if (!isRunning) {
             mResult = "";
             isRunning = true;
@@ -60,30 +79,19 @@ public class SpeechClientJYP {
             //Log.e("JYP/S", "naverRecognizer.recognize() START");
             naverRecognizer.recognize();
             tic();
-            //Log.e("JYP/S", "naverRecognizer.recognize() END");
-
-            return true;
-        } else {
-            return false;
         }
-        //JYP
-    }
-
-    public void stopASR() {
-        naverRecognizer.stop();
-        // todo 구현
     }
 
     public void tic() {
         tic_time = System.currentTimeMillis();
     }
 
-    public static long toc() {
+    public long toc() {
         return (System.currentTimeMillis() - tic_time);
     }
 
 
-    private static Handler scl_handler = new Handler() {
+    private Handler scl_handler = new Handler() {
         public void handleMessage(Message scl_msg) {
             //Log.e("JYP/S", "scl_Handler START");
             Message m_msg;
@@ -93,8 +101,7 @@ public class SpeechClientJYP {
                     m_msg = Message.obtain(m_Handler, 1, mResult); // 1 = Ready
                     m_Handler.sendMessage(m_msg);
 
-                    writer = new AudioWriterPCM(
-                            Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudioBuffer");
+                    writer = new AudioWriterPCM(writer_path);
                     writer.open(writer_filename);
                     break;
 
@@ -114,10 +121,7 @@ public class SpeechClientJYP {
                     // Extract obj property typed with String array.
                     // The first element is recognition result for speech.
                     String[] results = (String[]) scl_msg.obj;
-                    mResult = results[0];
-                    notewrite(mResult, toc());
-                    m_msg = Message.obtain(m_Handler, 3, mResult); // 3 = finalResult
-                    m_Handler.sendMessage(m_msg);
+                    outputResult(results);
                     break;
 
                 case R.id.recognitionError:
@@ -139,19 +143,43 @@ public class SpeechClientJYP {
                     isRunning = false;
                     m_msg = Message.obtain(m_Handler, 2); // 2 = Inactive
                     m_msg.sendToTarget();
+                    restartASR();
                     break;
             }
             //Log.e("JYP/S", "scl_Handler END");
         }
     };
 
-    private static void notewrite(String mResult, long toc_time)
-    {
-        notetaking.add(new Note(mResult, 0, (double)toc_time));
+    private void outputResult(String[] results) {
+        mResult = results[0];
+        notewrite(mResult, toc());
+        Message m_msg = Message.obtain(m_Handler, R.id.outputResult, mResult);
+        m_Handler.sendMessage(m_msg);
     }
 
-    public String get_context()
+    public void set_path(String path) {
+        this.writer_path = path;
+    }
+
+    public String get_path() {
+        return this.writer_path;
+    }
+
+    public void set_filename(String filename) {
+        this.writer_filename = filename;
+    }
+
+    public String get_filename() {
+        return this.writer_filename;
+    }
+
+    private void notewrite(String mResult, long toc_time)
     {
-        return notetaking.get_context();
+        this.notetaking.add(new Note(mResult, (double)this.tic_time, (double)toc_time));
+    }
+
+    public String[] get_context()
+    {
+        return this.notetaking.get_context();
     }
 }

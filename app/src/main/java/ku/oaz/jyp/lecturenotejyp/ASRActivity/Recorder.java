@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.ASRActivity;
 
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -10,19 +10,14 @@ import java.io.IOException;
  */
 public class Recorder {
     MediaRecorder recorder = new MediaRecorder();
-    String PATH_dir = Environment.getExternalStorageDirectory().getAbsolutePath();
-    String path;
+    String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/LNOTEAudio";
+    String filename = "Test";
+    String fileext = ".3gp";
 
     Recorder() {
         this.recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         this.recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
         this.recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-    }
-
-    public void set_path(String RECORD_FILE) {
-        //String RECORD_FILE = "/Rec01.wav";
-        this.path = PATH_dir + RECORD_FILE;
-        this.recorder.setOutputFile(this.path);
     }
 
     public void record() {
@@ -41,7 +36,21 @@ public class Recorder {
         this.recorder.stop();
     }
 
+    public void set_path(String path) {
+        //String RECORD_FILE = "/Rec01.wav";
+        this.path = path;
+        this.recorder.setOutputFile(this.path + this.filename);
+    }
+
     public String get_path() {
         return this.path;
+    }
+
+    public void set_filename(String filename) {
+        this.filename = filename;
+    }
+
+    public String get_filename() {
+        return this.filename;
     }
 }

@@ -6,7 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import ku.oaz.jyp.lecturenotejyp.R;
+import ku.oaz.jyp.lecturenotejyp.*;
 import com.naver.speech.clientapi.SpeechConfig;
 import com.naver.speech.clientapi.SpeechRecognitionException;
 import com.naver.speech.clientapi.SpeechRecognitionListener;

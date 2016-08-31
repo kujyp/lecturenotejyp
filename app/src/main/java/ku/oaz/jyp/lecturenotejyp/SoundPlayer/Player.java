@@ -1,4 +1,4 @@
-package ku.oaz.jyp.lecturenotejyp;
+package ku.oaz.jyp.lecturenotejyp.SoundPlayer;
 
 import android.media.MediaPlayer;
 import android.os.Environment;

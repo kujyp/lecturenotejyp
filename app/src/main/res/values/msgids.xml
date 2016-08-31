@@ -4,6 +4,7 @@
     <!-- Messages IDs -->
     <!-- JYP -->
 
+    <item name="outputResult" type="id"/>
     <item name="partialResult" type="id"/>
     <item name="finalResult" type="id"/>
     <item name="endPointDetected" type="id"/>
